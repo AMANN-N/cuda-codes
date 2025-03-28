@@ -2,23 +2,35 @@
 #include <cuda_runtime.h>
 
 #define N 1000  // Vector size
-   
+
+  
 __global__ 
-void matMul(float *A, float *B, float *C, int width)
+void blurImg(float *A, float *B, float *C, int width)
 {
     int i = threadIdx.x + blockIdx.x * blockDim.x;  //col
     int j = threadIdx.y + blockIdx.y * blockDim.y;  //row
 
     if(i < width && j < width)
     {
-        float Pvalue = 0;
-        // C[i*n + j] = A[i*n + j] + B[i*n + j];
-        for(int k=0; k<width; k++)
+        float sum = 0.0f;
+        int count = 0;
+
+        for(int di = -2; di <= 2; di++)
         {
-            Pvalue = Pvalue + (A[j*width + k] * B[width*k + i]);
+            for(int dj = -2; dj <= 2; dj++)
+            {
+                int ni = i + di;
+                int nj = j + dj;
+
+                if(ni >= 0 && ni < width && nj >= 0 && nj < width)
+                {
+                    sum += A[nj*width + ni];
+                    count++;
+                }
+            }
         }
-        // C[j*width + i] = Pvalue
-        C[j*width + i] = Pvalue;
+        
+        B[j*width + i] = sum / count;          
     }           
 }
 
@@ -54,7 +66,7 @@ int main() {
     dim3 block(16 , 16);
     dim3 grid((N + block.x - 1)/block.x, (N + block.y - 1)/block.y);
 
-    matMul<<<grid, block>>>(d_A, d_B, d_C, N);
+    blurImg<<<grid, block>>>(d_A, d_B, d_C, N);
 
     cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
 
