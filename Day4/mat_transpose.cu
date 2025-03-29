@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#define N 1000
+#define N 5  // Reduced for visibility
 
 __global__ 
 void mat_transpose(float *A, float *C, int width)
@@ -11,7 +11,7 @@ void mat_transpose(float *A, float *C, int width)
 
     if(i < width && j < width)
     {
-        C[i * width + j] = A[j * width + i];  // **Corrected swapping**
+        C[i * width + j] = A[j * width + i];  // Transpose operation
     }
 }
 
@@ -23,12 +23,12 @@ int main() {
     h_A = (float*)malloc(size);
     h_C = (float*)malloc(size);
 
-
+    // Initialize with values that make transposition visible
     for (int i = 0; i < N; i++) 
     {
         for(int j = 0; j < N; j++)
         {
-            h_A[i * N + j] = (float)(i + j); 
+            h_A[i * N + j] = i * N + j;  // Row-major order initialization
             h_C[i * N + j] = 0.0f; 
         }
     }
@@ -40,17 +40,26 @@ int main() {
     dim3 block(16, 16);
     dim3 grid((N + block.x - 1) / block.x, (N + block.y - 1) / block.y);
 
-
     mat_transpose<<<grid, block>>>(d_A, d_C, N);
 
     cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
 
-    printf("Transposed Matrix (First 5x5 pixels):\n");
-    for(int i = 0; i < 5; i++)      
+    printf("Original Matrix:\n");
+    for(int i = 0; i < N; i++)      
     {
-        for(int j = 0; j < 5; j++)
+        for(int j = 0; j < N; j++)
         {
-            printf("%0.2f ", h_C[i * N + j]);
+            printf("%4.0f ", h_A[i * N + j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nTransposed Matrix:\n");
+    for(int i = 0; i < N; i++)      
+    {
+        for(int j = 0; j < N; j++)
+        {
+            printf("%4.0f ", h_C[i * N + j]);
         }
         printf("\n");
     }
