@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#define n 1000
+#define N 1000
 
 __global__ void calcsum(float *x, float *out, int n) {
     extern __shared__ float sdata[];
     int a = threadIdx.x;
     int b = blockIdx.x * blockDim.x + threadIdx.x;
     
-    sdata[a] = (b < n) ? x[b] : 0.0f;
+    sdata[a] = (b < N) ? x[b] : 0.0f;
     __syncthreads();
     
     for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
@@ -21,23 +21,23 @@ __global__ void calcsum(float *x, float *out, int n) {
 
 int main() 
 {
-    size_t size = n * sizeof(float);
+    size_t size = N * sizeof(float);
     float *h_A = (float*)malloc(size);
     float *h_output = (float*)malloc(sizeof(float));
 
-    for (int i = 0; i < n; i++) h_A[i] = 1.0f;
+    for (int i = 0; i < N; i++) h_A[i] = 1.0f;
     
     float *d_A, *d_output;
     cudaMalloc(&d_A, size);
-    cudaMalloc(&d_output, ((n + 255) / 256) * sizeof(float));
+    cudaMalloc(&d_output, ((N + 255) / 256) * sizeof(float));
     
     cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
     
     int threads = 256;
-    int blocks = (n + threads - 1) / threads;
+    int blocks = (N + threads - 1) / threads;
 
 
-    calcsum<<<blocks, threads, threads * sizeof(float)>>>(d_A, d_output, n);
+    calcsum<<<blocks, threads, threads * sizeof(float)>>>(d_A, d_output, N);
 
 
     cudaDeviceSynchronize();
