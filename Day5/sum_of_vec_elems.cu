@@ -11,7 +11,8 @@ __global__ void calcsum(float *x, float *out, int n) {
     sdata[a] = (b < N) ? x[b] : 0.0f;
     __syncthreads();
     
-    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) {
+    for (unsigned int s = blockDim.x / 2; s > 0; s >>= 1) 
+    {
         if (a < s) sdata[a] += sdata[a + s];
         __syncthreads();
     }
@@ -25,7 +26,10 @@ int main()
     float *h_A = (float*)malloc(size);
     float *h_output = (float*)malloc(sizeof(float));
 
-    for (int i = 0; i < N; i++) h_A[i] = 1.0f;
+    for (int i = 0; i < N; i++)
+    {
+        h_A[i] = 1.0f;
+    } 
     
     float *d_A, *d_output;
     cudaMalloc(&d_A, size);
