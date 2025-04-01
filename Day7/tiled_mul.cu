@@ -10,19 +10,23 @@ void matMulTiled(float *A, float *B, float *C, int width)
     __shared__ float tileA[TILE_SIZE][TILE_SIZE];
     __shared__ float tileB[TILE_SIZE][TILE_SIZE];
     
-    int row = threadIdx.y + blockIdx.y * blockDim.y;
-    int col = threadIdx.x + blockIdx.x * blockDim.x;
+    int row = blockIdx.y * TILE_SIZE + threadIdx.y;
+    int col = blockIdx.x * TILE_SIZE + threadIdx.x;
     float Pvalue = 0;
     
     for (int t = 0; t < (width + TILE_SIZE - 1) / TILE_SIZE; ++t) 
     {
-        if (row < width && t * TILE_SIZE + threadIdx.x < width)
-            tileA[threadIdx.y][threadIdx.x] = A[row * width + t * TILE_SIZE + threadIdx.x];
+        int loadRow = row;
+        int loadCol = t * TILE_SIZE + threadIdx.x;
+        if (loadRow < width && loadCol < width)
+            tileA[threadIdx.y][threadIdx.x] = A[loadRow * width + loadCol];
         else
             tileA[threadIdx.y][threadIdx.x] = 0;
         
-        if (col < width && t * TILE_SIZE + threadIdx.y < width)
-            tileB[threadIdx.y][threadIdx.x] = B[(t * TILE_SIZE + threadIdx.y) * width + col];
+        loadRow = t * TILE_SIZE + threadIdx.y;
+        loadCol = col;
+        if (loadRow < width && loadCol < width)
+            tileB[threadIdx.y][threadIdx.x] = B[loadRow * width + loadCol];
         else
             tileB[threadIdx.y][threadIdx.x] = 0;
         
