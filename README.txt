@@ -6,3 +6,4 @@ Day 5 - Sum of all elements of an array.
 Day 6 - Implemented layer normalization 
 Day 7 - Tiled matrix multiplication
 Day 8 - 1D convolution Kernel
+Day 9 - 2D convolution Kernel
