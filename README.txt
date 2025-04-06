@@ -9,3 +9,4 @@ Day 8 - 1D convolution Kernel
 Day 9 - 2D convolution Kernel
 Day 10 - 2D convolution using cache for halo cells kernel
 Day 11 - Naive 3D 7 point stencil
+Day 12 - Tiled 3D & point stencil
