@@ -9,9 +9,9 @@
 
 __global__
 void tiled_stencil_3d_coarsened(float *input, float *output, int n) {
-    __shared__ float inPrev[TILE_Y + 2 * RAD][TILE_X + 2 * RAD];
-    __shared__ float inCurr[TILE_Y + 2 * RAD][TILE_X + 2 * RAD];
-    __shared__ float inNext[TILE_Y + 2 * RAD][TILE_X + 2 * RAD];
+    __shared__ float in0[TILE_Y + 2 * RAD][TILE_X + 2 * RAD];
+    __shared__ float in1[TILE_Y + 2 * RAD][TILE_X + 2 * RAD];
+    __shared__ float in2[TILE_Y + 2 * RAD][TILE_X + 2 * RAD];
 
     int tx = threadIdx.x;
     int ty = threadIdx.y;
@@ -20,52 +20,51 @@ void tiled_stencil_3d_coarsened(float *input, float *output, int n) {
 
     if (x >= n || y >= n) return;
 
-    for (int zBase = RAD; zBase < n - RAD; zBase += TILE_Z) {
-        for (int dz = 0; dz < TILE_Z + 2; dz++) {
-            int z = zBase + dz - 1;
-            if (z >= 0 && z < n) {
-                int idx = z * n * n + y * n + x;
-                float val = input[idx];
-                if (dz == 0)
-                    inPrev[ty + RAD][tx + RAD] = val;
-                else if (dz == 1)
-                    inCurr[ty + RAD][tx + RAD] = val;
-                else
-                    inNext[ty + RAD][tx + RAD] = val;
-            }
+    for (int zBase = 1; zBase < n - 1; zBase += TILE_Z) {
+        // Load in0, in1, in2
+        int z0 = zBase - 1;
+        int z1 = zBase;
+        int z2 = zBase + 1;
+
+        if (z0 < n) {
+            in0[ty + RAD][tx + RAD] = input[z0 * n * n + y * n + x];
+        }
+        if (z1 < n) {
+            in1[ty + RAD][tx + RAD] = input[z1 * n * n + y * n + x];
+        }
+        if (z2 < n) {
+            in2[ty + RAD][tx + RAD] = input[z2 * n * n + y * n + x];
         }
 
         __syncthreads();
 
         for (int dz = 0; dz < TILE_Z; dz++) {
             int z = zBase + dz;
-            if (z < RAD || z >= n - RAD) continue;
+            if (z <= 0 || z >= n - 1) continue;
 
-            float center = inCurr[ty + RAD][tx + RAD];
-            float left   = (tx > 0) ? inCurr[ty + RAD][tx + RAD - 1] : 0.0f;
-            float right  = (tx < TILE_X - 1) ? inCurr[ty + RAD][tx + RAD + 1] : 0.0f;
-            float up     = (ty > 0) ? inCurr[ty + RAD - 1][tx + RAD] : 0.0f;
-            float down   = (ty < TILE_Y - 1) ? inCurr[ty + RAD + 1][tx + RAD] : 0.0f;
-            float front  = inPrev[ty + RAD][tx + RAD];
-            float back   = inNext[ty + RAD][tx + RAD];
+            float center = in1[ty + RAD][tx + RAD];
+            float left   = (tx > 0)              ? in1[ty + RAD][tx + RAD - 1] : 0.0f;
+            float right  = (tx < TILE_X - 1)     ? in1[ty + RAD][tx + RAD + 1] : 0.0f;
+            float up     = (ty > 0)              ? in1[ty + RAD - 1][tx + RAD] : 0.0f;
+            float down   = (ty < TILE_Y - 1)     ? in1[ty + RAD + 1][tx + RAD] : 0.0f;
+            float front  = in0[ty + RAD][tx + RAD];
+            float back   = in2[ty + RAD][tx + RAD];
 
             float result = 0.4f * center +
                            0.1f * (left + right + up + down + front + back);
 
-            int outIdx = z * n * n + y * n + x;
-            output[outIdx] = result;
-        }
+            output[z * n * n + y * n + x] = result;
 
-        __syncthreads();
-
-        for (int i = ty; i < TILE_Y + 2 * RAD; i += blockDim.y) {
-            for (int j = tx; j < TILE_X + 2 * RAD; j += blockDim.x) {
-                inPrev[i][j] = inCurr[i][j];
-                inCurr[i][j] = inNext[i][j];
+            // Rotate planes
+            __syncthreads();
+            if (dz < TILE_Z - 1 && z + 2 < n) {
+                // Rotate: in0 <- in1, in1 <- in2, in2 <- new
+                in0[ty + RAD][tx + RAD] = in1[ty + RAD][tx + RAD];
+                in1[ty + RAD][tx + RAD] = in2[ty + RAD][tx + RAD];
+                in2[ty + RAD][tx + RAD] = input[(z + 2) * n * n + y * n + x];
             }
+            __syncthreads();
         }
-
-        __syncthreads();
     }
 }
 
