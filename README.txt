@@ -13,3 +13,6 @@ Day 12 - Tiled 3D 7 point stencil
 Day 13 - Coarsened 3D 7 point stencil
 Day 14 - Register tiling 3D stencil
 Day 15 - histogram with atomic operation kernel
+Day 16 - histogram using privitization (global memory)
+Day 17 - histogram using privitization (shared memory)
+Day 18 - histogram with coarsening
