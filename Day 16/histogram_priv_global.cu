@@ -32,7 +32,7 @@ void histogram_global(char *data, int length, int *histo, int blocks) {
 }
 
 int main() {
-    const char *input = "programming massively parallel processors";
+    const char *input = "cuda challenge day number sixteen less go";
     int length = strlen(input);
 
     int *h_histo = new int[NUM_BINS]();

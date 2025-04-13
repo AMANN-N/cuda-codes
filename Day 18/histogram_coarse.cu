@@ -36,7 +36,7 @@ void histogram_coarsened_global(char *data, int length, int *histo, int blocks) 
 }
 
 int main() {
-    const char *input = "cuda challenge day number sixteen less go";
+    const char *input = "cuda challenge day number eighteen less go";
     int length = strlen(input);
 
     int *h_histo = new int[NUM_BINS]();
@@ -61,7 +61,6 @@ int main() {
 
     cudaMemcpy(h_histo, d_histo, NUM_BINS * sizeof(int), cudaMemcpyDeviceToHost);
 
-    std::cout << "Coarsened Global Memory Histogram (4-letter bins):\n";
     for (int i = 0; i < NUM_BINS; i++) {
         char start = 'a' + i * 4;
         char end = (i == NUM_BINS - 1) ? 'z' : start + 3;

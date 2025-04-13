@@ -32,7 +32,7 @@ void histogram_shared(char *input, int length, int *global_hist) {
 }
 
 int main() {
-    const char *text = "cuda challenge day number sixteen less go";
+    const char *text = "cuda challenge day number seventeen less go";
     int length = strlen(text);
 
     char *h_input = new char[length];
