@@ -4,14 +4,16 @@
 
 #define NUM_BINS 7
 #define THREADS 64
-#define CFACTOR 3  
-#include <algorithm>
+#define CFACTOR 3 
 
 __global__
-void histogram_coarsened_interleaved(char *data, int length, int *histo, int blocks) {
+void histogram_coarsened_interleaved_aggregated(char *data, int length, int *histo, int blocks) {
     int tid = threadIdx.x;
     int gid = blockIdx.x * blockDim.x + tid;
     int total_threads = gridDim.x * blockDim.x;
+
+    int prevBin = -1;
+    int accumulator = 0;
 
     for (int i = gid; i < length; i += total_threads) {
         for (int j = 0; j < CFACTOR && i + j * total_threads < length; ++j) {
@@ -19,9 +21,21 @@ void histogram_coarsened_interleaved(char *data, int length, int *histo, int blo
             int pos = data[idx] - 'a';
             if (pos >= 0 && pos < 26) {
                 int bin = pos / 4;
-                atomicAdd(&histo[blockIdx.x * NUM_BINS + bin], 1);
+                if (bin == prevBin) {
+                    ++accumulator;
+                } else {
+                    if (accumulator > 0) {
+                        atomicAdd(&histo[blockIdx.x * NUM_BINS + prevBin], accumulator);
+                    }
+                    accumulator = 1;
+                    prevBin = bin;
+                }
             }
         }
+    }
+
+    if (accumulator > 0 && prevBin >= 0) {
+        atomicAdd(&histo[blockIdx.x * NUM_BINS + prevBin], accumulator);
     }
 
     __syncthreads();
@@ -59,10 +73,11 @@ int main() {
     cudaMemcpy(d_data, h_data, data_bytes, cudaMemcpyHostToDevice);
     cudaMemset(d_histo, 0, histo_bytes);
 
-    histogram_coarsened_interleaved<<<BLOCKS, THREADS>>>(d_data, length, d_histo, BLOCKS);
+    histogram_coarsened_interleaved_aggregated<<<BLOCKS, THREADS>>>(d_data, length, d_histo, BLOCKS);
     cudaDeviceSynchronize();
 
     cudaMemcpy(h_histo, d_histo, NUM_BINS * sizeof(int), cudaMemcpyDeviceToHost);
+
     for (int i = 0; i < NUM_BINS; i++) {
         char start = 'a' + i * 4;
         char end = (i == NUM_BINS - 1) ? 'z' : start + 3;
