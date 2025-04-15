@@ -18,3 +18,4 @@ Day 17 - histogram using privitization (shared memory)
 Day 18 - histogram with coarsening (contiguous partitioning)
 Day 19 - histogram with coarsening (interleaved partitioning)
 Day 20 - Aggregated text histogram kernel
+Day 21 - Implemented a naive sum reduction kernel
