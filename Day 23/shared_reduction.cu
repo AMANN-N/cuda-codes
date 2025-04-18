@@ -26,6 +26,7 @@ __global__ void shared_reduction(float *inp, float *out)
     }
 }
 
+
 int main()
 {
     int threadsPerBlock = 256;

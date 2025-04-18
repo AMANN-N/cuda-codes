@@ -21,3 +21,4 @@ Day 20 - Aggregated text histogram kernel
 Day 21 - Implemented a naive sum reduction kernel
 Day 22 - Implemented control divergent reduction kernel
 Day 23 - Implemented shared memory sum reduction kernel
+Day 24 - Implemented a segmented multiblock sum reduction kernel
