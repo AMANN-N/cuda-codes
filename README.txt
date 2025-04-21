@@ -24,3 +24,4 @@ Day 23 - Implemented shared memory sum reduction kernel
 Day 24 - Implemented a segmented multiblock sum reduction kernel
 Day 25 - Implemented thread coarsened sum reduction kernel
 Day 26 - Kogge-stone algo, inclusive scan
+Day 27 - Kogge-stone algo, exclusive scan
