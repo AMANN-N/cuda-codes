@@ -34,57 +34,31 @@ __global__ void coarse_scan(float *input, float *output, int N)
     last_elements[tid] = sum;
     __syncthreads();
 
-    // Phase 2: scan of last elements (Brent Kung)
-    for (unsigned int stride = 1; stride < THREADS_PER_BLOCK; stride *= 2) 
-    {
-        float temp = 0.0f;
-        if (tid >= stride) 
-        {
-            temp = last_elements[tid] + last_elements[tid - stride];
+    // Phase 2: scan of last elements 
+    if (tid == 0) {
+        for (int i = 1; i < THREADS_PER_BLOCK; i++) {
+            last_elements[i] += last_elements[i - 1];
         }
-        __syncthreads();
-        if (tid >= stride) 
-        {
-            last_elements[tid] = temp;
-        }
-        __syncthreads();
     }
+    __syncthreads();
 
     // Phase 3: apply offsets to shared results
-    if (tid > 0) 
+    float prefix_sum = (tid > 0) ? last_elements[tid - 1] : 0.0f;
+
+    for (unsigned int i = 0; i < subsection_size; ++i) 
     {
-        float prefix_sum = last_elements[tid - 1];
-        for (unsigned int i = 0; i < subsection_size; ++i) 
+        unsigned int idx = tid * subsection_size + i;
+        if (block_offset + idx < N) 
         {
-            unsigned int idx = tid * subsection_size + i;
-            if (block_offset + idx < N) 
-            {
-                output[block_offset + idx] = shared[idx] + prefix_sum;
-            }
-        }
-    } 
-    else 
-    {
-        for (unsigned int i = 0; i < subsection_size; ++i) 
-        {
-            unsigned int idx = tid * subsection_size + i;
-            if (block_offset + idx < N) 
-            {
-                output[block_offset + idx] = shared[idx];
-            }
+            output[block_offset + idx] = shared[idx] + prefix_sum;
         }
     }
-}
-
-
-
-
 }
 
 int main() 
 {
     const int N = 1024;
-    const int threadsPerBlock = SECTION_SIZE / 2;
+    const int threadsPerBlock = THREADS_PER_BLOCK; // Fixed
     const int numBlocks = (N + SECTION_SIZE - 1) / SECTION_SIZE;
 
     float *input, *output;
@@ -97,7 +71,7 @@ int main()
     coarse_scan<<<numBlocks, threadsPerBlock>>>(input, output, N);
     cudaDeviceSynchronize();
 
-    std::cout << "Last element: " << output[N - 1] << std::endl;
+    std::cout << "Last element: " << output[N - 1] << std::endl; // Should be 1024
 
     cudaFree(input);
     cudaFree(output);
