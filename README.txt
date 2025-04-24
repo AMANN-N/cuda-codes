@@ -27,3 +27,4 @@ Day 26 - Kogge-stone algo, inclusive scan
 Day 27 - Kogge-stone algo, exclusive scan
 Day 28 - Brent-Kung algo, inclusive segment scan
 Day 29 - Parallel scan with coarsening
+Day 30 - Merge sort (Sequential & Parallel)
