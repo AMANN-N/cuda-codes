@@ -29,3 +29,4 @@ Day 28 - Brent-Kung algo, inclusive segment scan
 Day 29 - Parallel scan with coarsening
 Day 30 - Merge sort (Sequential & Parallel)
 Day 31 - Merge sort with co rank matrix
+Day 32 - Tiled merge sort
