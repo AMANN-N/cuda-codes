@@ -31,3 +31,4 @@ Day 30 - Merge sort (Sequential & Parallel)
 Day 31 - Merge sort with co rank matrix
 Day 32 - Tiled merge sort
 Day 33 - Circular buffer merge kernel.
+Day 34 - Naive radix sort
