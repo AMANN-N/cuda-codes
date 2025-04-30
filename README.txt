@@ -33,3 +33,4 @@ Day 32 - Tiled merge sort
 Day 33 - Circular buffer merge kernel.
 Day 34 - Naive radix sort
 Day 35 - Parallel radix sort
+Day 36 - Parallel radix sort continued.
