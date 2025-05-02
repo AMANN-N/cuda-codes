@@ -35,3 +35,4 @@ Day 34 - Naive radix sort
 Day 35 - Parallel radix sort
 Day 36 - Parallel radix sort continued.
 Day 37 - Implemented parallel sigmoid and softmax kernel
+Day 38 - SpMV with COO
