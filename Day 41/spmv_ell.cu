@@ -27,10 +27,10 @@ __global__ void spmv_ell_kernel(const unsigned int* colIdx, const float* values,
 }
 
 int main() {
-    // ELLPACK version of:
+
     // [1 2]
     // [0 3]
-    // Padded with zero in second row first column
+
     unsigned int h_colIdx[] = {0, 1,   // row 0
                                1, 0};  // row 1 (padded)
     float h_values[] = {1.0f, 2.0f,
