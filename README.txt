@@ -36,3 +36,9 @@ Day 35 - Parallel radix sort
 Day 36 - Parallel radix sort continued.
 Day 37 - Implemented parallel sigmoid and softmax kernel
 Day 38 - SpMV with COO
+Day 39 - SpMV with CSR
+Day 40 - SpMV with CSR continued
+Day 41 - SpMV with ELL
+Day 42 - SpMV with ELL continued
+Day 43 - SpMV with JDS
+Day 44 - SpMV with JDS continued
