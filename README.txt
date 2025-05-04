@@ -42,3 +42,29 @@ Day 41 - SpMV with ELL
 Day 42 - SpMV with ELL continued
 Day 43 - SpMV with JDS
 Day 44 - SpMV with JDS continued
+Day 45 - BFS vertex centric (push)
+Day 46 - BFS vertex centric (push) completed
+Day 47 - BFS vertex centric (pull)
+Day 48 - BFS vertex centric (pull) completed
+Day 49 - BFS edge centric (partial)
+Day 50 - BFS edge centric continued
+Day 51 -
+Day 52 -
+Day 53 -
+Day 54 -
+Day 55 -
+Day 56 -
+Day 57 -
+Day 58 -
+Day 59 -
+Day 60 -
+Day 61 -
+Day 62 -
+Day 63 -
+Day 64 -
+Day 65 -
+Day 66 -
+Day 67 -
+Day 68 -
+Day 69 -
+Day 70 -
