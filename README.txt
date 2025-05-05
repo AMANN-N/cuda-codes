@@ -48,9 +48,9 @@ Day 47 - BFS vertex centric (pull)
 Day 48 - BFS vertex centric (pull) completed
 Day 49 - BFS edge centric (partial)
 Day 50 - BFS edge centric continued
-Day 51 -
-Day 52 -
-Day 53 -
+Day 51 - vertex-centric push (top-down) BFS kernel with frontiers
+Day 52 - vertex-centric push (top-down) BFS kernel with frontiers (continue)
+Day 53 - vertex-centric push (top-down) BFS kernel with privatization of frontiers
 Day 54 -
 Day 55 -
 Day 56 -
@@ -68,3 +68,14 @@ Day 67 -
 Day 68 -
 Day 69 -
 Day 70 -
+Day 71 -
+Day 72 -
+Day 73 -
+Day 74 -
+Day 75 -
+Day 76 -
+Day 77 -
+Day 78 -
+Day 79 -
+Day 80 - 
+
