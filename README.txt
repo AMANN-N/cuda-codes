@@ -51,7 +51,7 @@ Day 50 - BFS edge centric continued
 Day 51 - vertex-centric push (top-down) BFS kernel with frontiers
 Day 52 - vertex-centric push (top-down) BFS kernel with frontiers (continue)
 Day 53 - vertex-centric push (top-down) BFS kernel with privatization of frontiers
-Day 54 -
+Day 54 - MSE kernel
 Day 55 -
 Day 56 -
 Day 57 -
